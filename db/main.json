@@ -1,0 +1,8 @@
+{
+    "core": {
+        "db:xxx": "datalive"
+    },
+    "datalive": {
+        "hey": "hello"
+    }
+}

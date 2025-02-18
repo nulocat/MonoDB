@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>MonoDB - Shell</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+    </head>
+    <body
+        class="bg-gray-900 text-white flex items-center justify-center min-h-screen">
+        <main class="w-full max-w-lg p-6 bg-gray-800 rounded-lg shadow-lg">
+            <h1 class="text-xl font-bold mb-4 text-center">MonoDB - Shell</h1>
+            <output id="output"
+                class="block bg-gray-700 p-3 rounded mb-4 h-32 overflow-auto">
+                Seja bem-vindo ao shell do MonoDB
+            </output>
+            <div class="flex space-x-2 mb-4">
+                <input type="text" id="client_input"
+                    placeholder="Enter your command here"
+                    class="flex-1 p-2 bg-gray-700 rounded text-white focus:outline-none">
+                <button id="send_command"
+                    class="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded">Send</button>
+            </div>
+            <label class="block">
+                <span class="text-gray-400">API KEY</span>
+                <input type="password" id="api_key"
+                    class="w-full p-2 bg-gray-700 rounded text-white focus:outline-none mt-1">
+            </label>
+        </main>
+        <script>
+            const output = document.querySelector('#output');
+            const input = document.querySelector('#client_input');
+            const apiKey = document.querySelector('#api_key');
+            const button = document.querySelector('#send_command');
+
+            button.addEventListener('click', async () => {
+                const command = input.value.trim();
+                const api_key = apiKey.value.trim();
+                
+                if (!command || !api_key) {
+                    output.innerHTML = '<span class="text-red-400">Please enter a command and an API key</span>';
+                    return;
+                }
+                output.innerHTML += '<br><span class="text-blue-400">' + command + '</span>';
+                fetch('/api/', {
+                    method: 'POST',
+                    headers: {
+                        'Api-Key': api_key,
+                        'Content-Type': 'application/json'
+                    },
+                    body: command
+                })
+                .then(async data => {
+                    let msg = await data.text();
+
+                    if (data.ok) {
+                        output.innerHTML += '<br><span class="text-green-400">' + msg + '</span>';
+                    } else {
+                        output.innerHTML += '<br><span class="text-red-400">' + msg + '</span>';
+                    }
+                    
+                })
+            });
+        </script>
+    </body>
+</html>
