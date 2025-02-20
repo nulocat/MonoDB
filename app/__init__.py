@@ -22,11 +22,7 @@ def create_app():
 
         db = Database()
         if api_key == app.secret_key:
-            if command == "dump":
-                return db._data, 200
-                
             status, result = db.run_admin_command(command)
-
         else:
             success, database_name = db.run_command(f"get db:{api_key}",
                                                     "core")
@@ -34,8 +30,6 @@ def create_app():
                 return "Invalid Api-Key", 400
 
             status, result = db.run_command(command, database_name)
-
-        
 
         if status:
             return result, 200

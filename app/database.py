@@ -46,28 +46,33 @@ class Database:
                     logging.error("DB: LOAD FAILED")
                     logging.error(f"DB: ERROR OUTPUT:\n{e}")
 
+    def create_database_if_not_exists(self, database: str):
+        if database not in self._data:
+            self._data[database] = {}
+
     def run_command(self, command: str, database: str) -> Tuple[bool, str]:
         try:
-            if database not in self._data:
-                self._data[database] = {}
-
             split = command.split(" ")
             match split[0].lower():
                 case "set":
+                    self.create_database_if_not_exists(database)
                     key = split[1]
                     value = split[2]
                     self._data[database][key] = value
                     return True, "Written"
                 case "get":
+                    self.create_database_if_not_exists(database)
                     key = split[1]
                     return True, self._data[database][key]
                 case "del":
+                    self.create_database_if_not_exists(database)
                     key = split[1]
                     del self._data[database][key]
                     return True, "Deleted"
                 case "help":
                     return True, "Available commands:\nset key value\nget key\ndel key\nhelp\ngetalldata"
-                case "getalldata": # be like admin dump but only in database selected
+                case "getalldata":  # be like admin dump but only in database selected
+                    self.create_database_if_not_exists(database)
                     return True, json.dumps(self._data[database], indent=4)
                 case _:
                     return False, "COMMAND NOT FOUND"
@@ -77,12 +82,21 @@ class Database:
 
     def run_admin_command(self, command: str) -> Tuple[bool, str]:
         try:
+            if command == "dump":
+                return True, json.dumps(self._data, indent=4)
+            elif command == "save":
+                self.save()
+                return True, "Saved"
+            elif command == "load":
+                self.load()
+                return True, "Loaded"
+            elif command == "clear":
+                self._data = {}
+                return True, "Cleared"
+
             split = command.split(" ")
             database = split.pop(0) or "core"
             command = " ".join(split)
-            
-            
             return self.run_command(command, database)
         except:
             return False, "ADMIN COMMAND DUMPED, CHECK YOUR COMMAND"
-            
