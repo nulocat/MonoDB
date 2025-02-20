@@ -22,7 +22,8 @@ class Database:
         return cls._instance
 
     def _start_auto_save(self):
-        self._save_thread = threading.Timer(self._save_interval, self._auto_save)
+        self._save_thread = threading.Timer(self._save_interval,
+                                            self._auto_save)
         self._save_thread.start()
 
     def _auto_save(self):
@@ -64,8 +65,24 @@ class Database:
                     key = split[1]
                     del self._data[database][key]
                     return True, "Deleted"
+                case "help":
+                    return True, "Available commands:\nset key value\nget key\ndel key\nhelp\ngetalldata"
+                case "getalldata": # be like admin dump but only in database selected
+                    return True, json.dumps(self._data[database], indent=4)
                 case _:
                     return False, "COMMAND NOT FOUND"
 
         except:
             return False, "COMMAND DUMPED, CHECK YOUR COMMAND"
+
+    def run_admin_command(self, command: str) -> Tuple[bool, str]:
+        try:
+            split = command.split(" ")
+            database = split.pop(0) or "core"
+            command = " ".join(split)
+            
+            
+            return self.run_command(command, database)
+        except:
+            return False, "ADMIN COMMAND DUMPED, CHECK YOUR COMMAND"
+            

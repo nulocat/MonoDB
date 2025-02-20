@@ -1,0 +1,20 @@
+modules = ["python-3.12", "web"]
+run = ["python3", "-m", "app"]
+[nix]
+channel = "stable-24_05"
+
+[[ports]]
+localPort = 5000
+externalPort = 5000
+
+[[ports]]
+localPort = 8000
+externalPort = 8000
+
+[[ports]]
+localPort = 8080
+externalPort = 80
+
+
+[deployment]
+run = ["gunicorn", "-w 4", "-b 0.0.0.0", "app:create-app()"]
