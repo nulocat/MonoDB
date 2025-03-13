@@ -62,7 +62,7 @@ python run.py # it get app and run port 5000 (debug)
 ```
 Or
 ```sh
-python3 -m app # it run port 8080 app/__main__.py (sim-productio)
+python3 -m app # it run port 8080 app/__main__.py (sim-production)
 ```
 
 The application will be available at `http://localhost:5000`.
