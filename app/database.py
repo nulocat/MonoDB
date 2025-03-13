@@ -7,7 +7,7 @@ import logging
 
 class Database:
     _instance = None
-    _save_interval = 60  # 1 minuto
+    _save_interval = 60  # Save interval in seconds
     _save_thread: threading.Timer | None = None
     _db_file = "db/main.json"
 
@@ -17,7 +17,7 @@ class Database:
         if cls._instance is None:
             cls._instance = super(Database, cls).__new__(cls)
             cls._instance._data = {}
-            cls._instance.load()  # Carrega os dados ao iniciar
+            cls._instance.load()  # Load data on startup
             cls._instance._start_auto_save()
         return cls._instance
 
