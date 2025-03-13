@@ -3,7 +3,7 @@ name = "monodb"
 version = "0.0.1"
 description = ""
 authors = ["nulocat <nulocat@proton.me>"]
-license = "Apache-2.0"
+license = "MIT"
 readme = "README.md"
 
 [tool.poetry.dependencies]
