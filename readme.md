@@ -1,141 +1,185 @@
+# MonoDB  
 
-# MonoDB
+**A Lightweight Key-Value Database with Web Interface and REST API**  
 
-MonoDB is a simple key-value database with a web-based shell interface. It is built using Flask and provides a RESTful API for interacting with the database.
+![License](https://img.shields.io/badge/License-MIT-blue)  
+![Python](https://img.shields.io/badge/Python-3.8%2B-green)
 
-## Objective
+A simple NoSQL database designed for internal tools, featuring a web-based shell and RESTful API. Built with Flask for easy integration and extensibility.
 
-The objective of this system is to serve as an easy-to-use and modify local database, primarily intended for use in internal company tools. It is secure and very easy to integrate.
+---
 
-## Features
+## Table of Contents  
+- [Features](#features)  
+- [Installation](#installation)  
+- [Quick Start](#quick-start)  
+- [Configuration](#configuration)  
+- [Web Interface](#web-interface)  
+- [API Documentation](#api-documentation)  
+- [Database Management](#database-management)  
+  - [Core Database](#core-database)  
+  - [Multi-Database Support](#multi-database-support)  
+- [Advanced Usage](#advanced-usage)  
+- [Project Structure](#project-structure)  
+- [License](#license)  
 
-- Key-value storage
-- Web-based shell interface
-- RESTful API for database operations
-- Auto-save functionality
+---
 
-## Project Structure
+## Features  
+- 🚀 **Key-Value Storage**: Simple `set`, `get`, and `del` operations.  
+- 🌐 **Web-Based Shell**: Interactive browser interface for direct database access.  
+- 🔒 **API Key Authentication**: Secure endpoints with customizable keys.  
+- 💾 **Auto-Save & Persistence**: Data preserved across restarts.  
+- 🛠 **Admin Tools**: Multi-database management, backups, and bulk operations.  
+- 📦 **Lightweight**: Single-file storage with minimal dependencies.  
 
-```
-MonoDB/
-├── .gitignore
-├── .replit
-├── LICENCE.txt
-├── poetry.lock
-├── pyproject.toml
-├── readme.md
-├── run.py
-├── wsgi.py
-└── app/
-    ├── __init__.py
-    ├── __main__.py
-    ├── database.py
-    └── templates/
-        └── shell.html
-```
+---
 
-## Installation
+## Installation  
 
-1. Clone the repository:
-    ```sh
-    git clone https://github.com/yourusername/monodb.git
-    cd monodb
-    ```
+1. **Clone the Repository**:  
+   ```bash
+   git clone https://github.com/yourusername/monodb.git
+   cd monodb
+   ```
 
-2. Install dependencies using Poetry:
-    ```sh
-    poetry install
-    ```
+2. **Install Dependencies (via Poetry)**:  
+   ```bash
+   poetry install
+   ```
 
-3. Set the `SECRET_KEY` environment variable:
-    ```sh
-    export SECRET_KEY='your_secret_key'
-    ```
+---
 
-## Usage
+## Quick Start  
 
-### Running the Application
-
-To run the application locally, use the following command:
-```sh
-python run.py # it get app and run port 5000 (debug)
-```
-Or
-```sh
-python3 -m app # it run port 8080 app/__main__.py (sim-production)
+### Running the Server  
+**Development Mode (Port 5000)**:  
+```bash
+python run.py  # Debug mode with hot reload
 ```
 
-The application will be available at `http://localhost:5000`.
+**Production Mode (Port 8080)**:  
+```bash
+python3 -m app  # Simulated production environment
+```
 
-### Deployment
-
-To deploy the application using Gunicorn, use the following command:
-```sh
+### Deployment with Gunicorn  
+```bash
 gunicorn -w 4 -b 0.0.0.0:8080 app:create_app()
 ```
 
-### API Endpoints
+---
 
-- `POST /api`: Execute a command on the database.
-    - Headers:
-        - `Api-Key`: Your API key.
+## Configuration  
 
-    Request Parts
-    | Part    | Value          | Explain                                                                 |
-    |---------|----------------|-------------------------------------------------------------------------|
-    | URL     | /api           | The endpoint to which the request is sent.                              |
-    | Method  | POST           | The HTTP method used for the request.                                   |
-    | Header Api-Key | your_api_key   | Metadata for the request, such as `Api-Key` for authentication.         |
-    | Body    | set key value  | The data sent with the request, typically in plain text for key-value API commands. |
+1. **Set the Secret Key**:  
+   ```bash
+   export SECRET_KEY='your_random_secret_here'
+   ```
 
-### Example cURL Requests
+2. **Default API Key**:  
+   - On first run, a `core` database is created with a default API key: `default-key`.  
+   - **Change this immediately** using the `core` database commands.  
 
-To interact with the API, you can use the following cURL commands:
+---
 
-1. Set a key-value pair:
-    ```sh
-    curl -X POST http://localhost:5000/api -H "Api-Key: your_api_key" -d "set key value"
-    ```
+## Web Interface  
+Access the interactive shell at `http://localhost:5000`:  
+![Web Shell Demo](demo_shell.gif)
+(gif incomming)
 
-2. Get the value of a key:
-    ```sh
-    curl -X POST http://localhost:5000/api -H "Api-Key: your_api_key" -d "get key"
-    ```
+---
 
-3. Delete a key:
-    ```sh
-    curl -X POST http://localhost:5000/api -H "Api-Key: your_api_key" -d "del key"
-    ```
+## API Documentation  
 
-4. Get all data:
-    ```sh
-    curl -X POST http://localhost:5000/api -H "Api-Key: your_api_key" -d "getalldata"
-    ```
+### Endpoint  
+**`POST /api`**  
+Execute database commands via HTTP.  
 
-### Web Interface
+| Header          | Body Example      | Description                          |
+|-----------------|-------------------|--------------------------------------|
+| `Api-Key: KEY`  | `set user:1 John` | Requires valid API key. Plain text command. |
 
-The web-based shell interface is available at the root URL (`/`). It allows you to enter commands and view the output directly in your browser.
+### Example Requests  
 
-## Database Commands
+1. **Set a Key-Value Pair**:  
+   ```bash
+   curl -X POST http://localhost:5000/api -H "Api-Key: default-key" -d "set book:1984 'George Orwell'"
+   ```
 
-- `set key value`: Set a key-value pair.
-- `get key`: Get the value of a key.
-- `del key`: Delete a key.
-- `help`: Display available commands.
-- `getalldata`: Get all data in the selected database.
+2. **Retrieve Data**:  
+   ```bash
+   curl -X POST http://localhost:5000/api -H "Api-Key: default-key" -d "get book:1984"
+   ```
 
-### Admin Commands
+3. **Admin Command (Dump Database)**:  
+   ```bash
+   curl -X POST http://localhost:5000/api -H "Api-Key: default-key" -d "dump"
+   ```
 
-- `dump`: Dump all data in the database.
-- `save`: Save the current state of the database.
-- `load`: Load the database from the saved state.
-- `clear`: Clear all data in the database.
+---
 
-## How the Database Works
+## Database Management  
 
-Under the hood, MonoDB uses a simple dictionary to store key-value pairs in memory. The `database.py` module handles all database operations, including setting, getting, and deleting keys. The auto-save functionality ensures that the database state is periodically saved to a file, allowing for data persistence across application restarts.
+### Core Database  
+- Reserved for internal operations (API keys, database mappings).  
+- **Do not modify manually**. Use admin commands instead.  
+- Default API key: `default-key` (change with `core set db:default-key NEW_KEY`).  
 
-## License
+### Multi-Database Support  
 
-This project is licensed under the MIT. See the [LICENSE](LICENCE.txt) file for details.
+#### Create a New Database  
+```bash
+# Syntax: [core] set db:<API_KEY> <DATABASE_NAME>
+core set db:my-secret-key inventory
+```
 
+#### Switch Databases in Web Shell  
+```bash
+# Prefix commands with the database name:
+inventory set item:1 "Product A"
+```
+
+#### List All Databases  
+```bash
+core getalldata  # Returns all API key-database mappings
+```
+
+---
+
+## Advanced Usage  
+
+### Admin Commands  
+| Command               | Description                          |
+|-----------------------|--------------------------------------|
+| `save`                | Force immediate data persistence.    |
+| `load`                | Reload data from disk.               |
+| `clear`               | Wipe all data in the current DB.     |
+| `dump`                | Export all key-value pairs (JSON).   |
+
+### Auto-Save Mechanism  
+- Data is automatically saved every 5 minutes to `database.json`.  
+- Manual saves: `curl -X POST ... -d "save"`  
+
+---
+
+## Project Structure  
+```
+MonoDB/
+├── app/
+│   ├── __init__.py         # Flask app factory
+│   ├── database.py         # Core database logic
+│   └── templates/shell.html  # Web interface
+├── run.py                  # Development launcher
+├── wsgi.py                 # Production WSGI entry
+└── database.json           # Auto-saved data
+```
+
+---
+
+## License  
+Distributed under the MIT License. See [LICENSE](LICENCE.txt) for details.  
+
+---
+
+**Contributions welcome!** Submit issues or PRs via GitHub.
