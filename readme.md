@@ -161,7 +161,7 @@ Execute database commands via HTTP.
 
 ```bash
 # Syntax: [core] set db:<API_KEY> <DATABASE_NAME>
-core set db:my-secret-key inventory
+core set db:invetory_api_key inventory
 ```
 
 #### Switch Databases in Web Shell (has admin api\_key)
