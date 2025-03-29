@@ -193,8 +193,8 @@ core getalldata  # Returns all API key-database mappings
 
 ### Auto-Save Mechanism
 
-- MonoDB **não é baseado em arquivos JSON**, mas sim em um **dicionário Python armazenado em memória**. O JSON é apenas um meio de garantir que os dados não sejam perdidos em caso de desligamento.
-- O armazenamento em disco ocorre **apenas periodicamente**, garantindo melhor desempenho durante operações normais.
+- MonoDB **is not based on JSON files** but rather a **Python dictionary stored in memory**. JSON is only used as a means to ensure data persistence in case of shutdown.  
+- Disk storage occurs **only periodically**, ensuring better performance during normal operations.  
 - Manual saves: `curl -X POST ... -d "save"`
 
 ---
